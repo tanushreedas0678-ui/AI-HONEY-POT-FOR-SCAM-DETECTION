@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Honeypot System - Scam Detection & Intelligence Extraction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #111827;
+            border-bottom: 1px solid #1f2937;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #2563eb, #9333ea);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .header-title p {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-json {
+            background-color: #1f2937;
+            color: #d1d5db;
+            border-color: #374151;
+        }
+
+        .btn-json:hover {
+            background-color: #374151;
+        }
+
+        .btn-json.active {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #374151;
+            color: #ffffff;
+            border-color: #374151;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+        }
+
+        /* Status Banner */
+        .status-banner {
+            background-color: #172554;
+            border: 1px solid #1e40af;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pulse-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #60a5fa;
+            border-radius: 50%;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .status-text {
+            font-size: 0.875rem;
+            color: #bfdbfe;
+        }
+
+        .complete-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #14532d;
+            color: #86efac;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 0.5rem;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-icon {
+            width: 4rem;
+            height: 4rem;
+            background-color: #1e3a8a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .welcome-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .welcome-section p {
+            color: #9ca3af;
+            margin-bottom: 1.5rem;
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-large {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+        }
+
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .stat-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            color: #10b981;
+            margin-top: 0.25rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+        }
+
+        /* Conversation View */
+        .conversation-card {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .conversation-header {
+            padding: 1rem;
+            background-color: #1f2937;
+            border-bottom: 1px solid #374151;
+        }
+
+        .persona-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #1e3a8a;
+            color: #60a5fa;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+
+        .messages-container {
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .message.scammer {
+            justify-content: flex-start;
+        }
+
+        .message.honeypot {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .message.scammer .message-bubble {
+            background-color: #7f1d1d;
+            border: 1px solid #991b1b;
+        }
+
+        .message.honeypot .message-bubble {
+            background-color: #1e3a8a;
+            border: 1px solid #1e40af;
+        }
+
+        .message-sender {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .message.scammer .message-sender {
+            color: #fca5a5;
+        }
+
+        .message.honeypot .message-sender {
+            color: #93c5fd;
+        }
+
+        .message-text {
+            color: #ffffff;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        /* Intelligence Extraction */
+        .intelligence-card {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .intel-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .intel-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background-color: #1f2937;
+            border-radius: 0.375rem;
+        }
+
+        .intel-label {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+
+        .intel-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .intel-value.high-risk {
+            color: #ef4444;
+        }
+
+        .intel-value.success {
+            color: #10b981;
+        }
+
+        .json-container {
+            background-color: #000000;
+            border: 1px solid #374151;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .json-container pre {
+            color: #10b981;
+            font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Capabilities Section */
+        .capabilities-section {
+            background-color: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .capabilities-section h3 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .capability-item {
+            padding: 1rem;
+            background-color: #172554;
+            border: 1px solid #1e3a8a;
+            border-radius: 0.5rem;
+        }
+
+        .capability-item p {
+            font-size: 0.875rem;
+            color: #93c5fd;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-lg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .icon-xl {
+            width: 2rem;
+            height: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <svg class="icon-xl" viewBox="0 0 24 24" style="stroke: white;">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="header-title">
+                        <h1>AI Honeypot System</h1>
+                        <p>Scam Detection & Intelligence Extraction</p>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button id="jsonToggle" class="btn-json">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        <span id="jsonButtonText">Show JSON</span>
+                    </button>
+
+                    <button id="startButton" class="btn-primary">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Start Simulation
+                    </button>
+
+                    <button id="resetButton" class="btn-secondary hidden">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Status Banner -->
+            <div id="statusBanner" class="status-banner hidden">
+                <div class="status-left">
+                    <div class="pulse-dot"></div>
+                    <p class="status-text" id="statusText">Workflow in progress... Step 0 of 7</p>
+                </div>
+                <div id="completeBadge" class="complete-badge hidden">
+                    <svg class="icon" viewBox="0 0 24 24" style="stroke: #86efac;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Scam Intelligence Extracted
+                </div>
+            </div>
+
+            <!-- Welcome Section -->
+            <div id="welcomeSection" class="welcome-section">
+                <div class="welcome-icon">
+                    <svg class="icon-xl" viewBox="0 0 24 24" style="stroke: #60a5fa;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h2>Agentic Honeypot for Scam Detection</h2>
+                <p>
+                    This autonomous AI honeypot system detects scam messages and actively engages
+                    scammers using a believable persona to extract bank account details, UPI IDs, and
+                    phishing links.
+                </p>
+                <button class="btn-primary btn-large" onclick="startSimulation()">
+                    <svg class="icon-lg" viewBox="0 0 24 24">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Start Demo Simulation
+                </button>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Scams Detected</span>
+                        <div class="stat-icon" style="background-color: #7f1d1d;">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: #ef4444;">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">127</div>
+                    <div class="stat-change">↑ 12% from last week</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Active Engagements</span>
+                        <div class="stat-icon" style="background-color: #1e3a8a;">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: #3b82f6;">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-change">Currently active</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Bank Accounts</span>
+                        <div class="stat-icon" style="background-color: #14532d;">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: #22c55e;">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-change">Extracted & reported</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">UPI IDs</span>
+                        <div class="stat-icon" style="background-color: #581c87;">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: #a855f7;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">89</div>
+                    <div class="stat-change">Extracted & reported</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Phishing Links</span>
+                        <div class="stat-icon" style="background-color: #713f12;">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: #f59e0b;">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-change">Extracted & reported</div>
+                </div>
+            </div>
+
+            <!-- Conversation View -->
+            <div id="conversationSection" class="content-section hidden">
+                <h2 class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Live Conversation Monitor
+                </h2>
+                <div class="conversation-card">
+                    <div class="conversation-header">
+                        <div class="persona-badge">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: #60a5fa;">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Active Persona: Rahul Verma - Small Business Owner
+                        </div>
+                    </div>
+                    <div class="messages-container" id="messagesContainer">
+                        <!-- Messages will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intelligence Extraction -->
+            <div id="intelligenceSection" class="content-section hidden">
+                <h2 class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Extracted Intelligence
+                </h2>
+                <div class="intelligence-card">
+                    <div class="intel-grid">
+                        <div class="intel-item">
+                            <span class="intel-label">Scam Detected</span>
+                            <span class="intel-value success">✓ Yes</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">Scam Type</span>
+                            <span class="intel-value">KYC Fraud</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">Confidence Score</span>
+                            <span class="intel-value">93%</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">Risk Level</span>
+                            <span class="intel-value high-risk">High</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">UPI ID</span>
+                            <span class="intel-value">verify@cupi</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">Bank Account</span>
+                            <span class="intel-value">Not provided</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">Phishing Link</span>
+                            <span class="intel-value">http://fake-kyc.in</span>
+                        </div>
+                        <div class="intel-item">
+                            <span class="intel-label">Agent Persona</span>
+                            <span class="intel-value">Rahul Verma</span>
+                        </div>
+                    </div>
+
+                    <div id="jsonView" class="json-container hidden">
+                        <pre>{
+  "scam_detected": true,
+  "scam_type": "KYC Fraud",
+  "confidence_score": 0.93,
+  "extracted_entities": {
+    "upi_id": "verify@cupi",
+    "bank_account": null,
+    "phishing_link": "http://fake-kyc.in"
+  },
+  "agent_persona": "Rahul Verma",
+  "risk_level": "High"
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Capabilities -->
+            <div class="capabilities-section">
+                <h3>System Capabilities</h3>
+                <div class="capabilities-grid">
+                    <div class="capability-item">
+                        <p>✓ Autonomous scam detection</p>
+                    </div>
+                    <div class="capability-item">
+                        <p>✓ Believable AI persona engagement</p>
+                    </div>
+                    <div class="capability-item">
+                        <p>✓ Intelligence extraction</p>
+                    </div>
+                    <div class="capability-item">
+                        <p>✓ Structured JSON output</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let isRunning = false;
+        let currentStep = 0;
+        let stepTimer = null;
+        let showJson = false;
+
+        const conversationScript = [
+            {
+                id: 1,
+                sender: 'scammer',
+                text: 'Dear Customer, Your KYC is pending. Click this link to verify immediately: http://fake-kyc.in',
+                timestamp: '10:23 AM'
+            },
+            {
+                id: 2,
+                sender: 'honeypot',
+                text: 'Oh no! I just saw this message. Is my account going to be blocked? I need it for my business.',
+                timestamp: '10:24 AM'
+            },
+            {
+                id: 3,
+                sender: 'scammer',
+                text: 'Yes sir, your account will be blocked in 2 hours. Please click the link and update your details urgently.',
+                timestamp: '10:24 AM'
+            },
+            {
+                id: 4,
+                sender: 'honeypot',
+                text: 'I clicked but it\'s asking for payment. Is this normal? I run a small business and can\'t afford any issues.',
+                timestamp: '10:25 AM'
+            },
+            {
+                id: 5,
+                sender: 'scammer',
+                text: 'Yes, pay ₹500 for verification. Send to UPI: verify@cupi. This is mandatory for KYC compliance.',
+                timestamp: '10:26 AM'
+            },
+            {
+                id: 6,
+                sender: 'honeypot',
+                text: 'Okay, let me send it now. Can you confirm the UPI ID again? I want to make sure I send it to the right place.',
+                timestamp: '10:27 AM'
+            },
+            {
+                id: 7,
+                sender: 'scammer',
+                text: 'Yes, send to verify@cupi. After payment, share screenshot here for instant activation.',
+                timestamp: '10:27 AM'
+            }
+        ];
+
+        function startSimulation() {
+            isRunning = true;
+            currentStep = 1;
+
+            // Update UI
+            document.getElementById('welcomeSection').classList.add('hidden');
+            document.getElementById('statusBanner').classList.remove('hidden');
+            document.getElementById('startButton').classList.add('hidden');
+            document.getElementById('resetButton').classList.remove('hidden');
+            document.getElementById('messagesContainer').innerHTML = '';
+
+            // Start step timer
+            stepTimer = setInterval(() => {
+                if (currentStep < 7) {
+                    currentStep++;
+                    updateUI();
+                } else {
+                    clearInterval(stepTimer);
+                }
+            }, 2000);
+
+            updateUI();
+        }
+
+        function resetSimulation() {
+            isRunning = false;
+            currentStep = 0;
+
+            if (stepTimer) {
+                clearInterval(stepTimer);
+                stepTimer = null;
+            }
+
+            // Update UI
+            document.getElementById('welcomeSection').classList.remove('hidden');
+            document.getElementById('statusBanner').classList.add('hidden');
+            document.getElementById('conversationSection').classList.add('hidden');
+            document.getElementById('intelligenceSection').classList.add('hidden');
+            document.getElementById('startButton').classList.remove('hidden');
+            document.getElementById('resetButton').classList.add('hidden');
+            document.getElementById('completeBadge').classList.add('hidden');
+            document.getElementById('messagesContainer').innerHTML = '';
+        }
+
+        function updateUI() {
+            // Update status text
+            document.getElementById('statusText').textContent = `Workflow in progress... Step ${currentStep} of 7`;
+
+            // Show complete badge
+            if (currentStep === 7) {
+                document.getElementById('completeBadge').classList.remove('hidden');
+            }
+
+            // Show conversation section
+            if (currentStep >= 4) {
+                document.getElementById('conversationSection').classList.remove('hidden');
+                updateConversation();
+            }
+
+            // Show intelligence section
+            if (currentStep >= 6) {
+                document.getElementById('intelligenceSection').classList.remove('hidden');
+            }
+        }
+
+        function updateConversation() {
+            const messageIndex = currentStep - 4;
+            const messagesToShow = conversationScript.slice(0, (messageIndex + 1) * 2);
+            
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+
+            messagesToShow.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${message.sender}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        <div class="message-sender">${message.sender === 'scammer' ? 'Scammer' : 'AI Honeypot'}</div>
+                        <div class="message-text">${message.text}</div>
+                        <div class="message-time">${message.timestamp}</div>
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function toggleJson() {
+            showJson = !showJson;
+            const jsonView = document.getElementById('jsonView');
+            const jsonToggle = document.getElementById('jsonToggle');
+            const jsonButtonText = document.getElementById('jsonButtonText');
+
+            if (showJson) {
+                jsonView.classList.remove('hidden');
+                jsonToggle.classList.add('active');
+                jsonButtonText.textContent = 'Hide JSON';
+            } else {
+                jsonView.classList.add('hidden');
+                jsonToggle.classList.remove('active');
+                jsonButtonText.textContent = 'Show JSON';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('startButton').addEventListener('click', startSimulation);
+        document.getElementById('resetButton').addEventListener('click', resetSimulation);
+        document.getElementById('jsonToggle').addEventListener('click', toggleJson);
+    </script>
+</body>
+</html>
